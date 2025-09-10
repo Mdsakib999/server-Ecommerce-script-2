@@ -6,6 +6,8 @@ import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import { router } from "./app/routes/router";
 import passport from "passport";
+import "./app/config/passport";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,11 +20,15 @@ app.use(
     saveUninitialized: false,
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(cookieParser());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,

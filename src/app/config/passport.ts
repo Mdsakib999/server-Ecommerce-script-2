@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcryptjs from "bcryptjs";
 import passport from "passport";
 import {
@@ -8,6 +9,9 @@ import {
 import { Strategy as LocalStrategy } from "passport-local";
 import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 passport.use(
   new LocalStrategy(
@@ -31,10 +35,11 @@ passport.use(
           (providerObject) => providerObject.provider === "google"
         );
 
+        console.log("isGoogleAuthenticated==>", isGoogleAuthenticated);
+
         if (isGoogleAuthenticated && !isUserExists.password) {
           return done(null, false, {
-            message:
-              "you have authenticated through google login! if you want to login through credentials at first login with google then set a password",
+            message: "You have authenticated through Google login!",
           });
         }
 
