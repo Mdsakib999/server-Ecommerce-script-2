@@ -13,6 +13,14 @@ const moduleRoutes = [
     path: "/user",
     element: userRoutes,
   },
+  {
+    path: "/product",
+    element: userRoutes,
+  },
+  {
+    path: "/review",
+    element: userRoutes,
+  },
 ];
 
 moduleRoutes.forEach((route) => {
