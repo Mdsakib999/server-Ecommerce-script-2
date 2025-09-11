@@ -1,8 +1,8 @@
-import { JwtPayload } from "jsonwebtoken";
-import { IAuthProvider, IUser, Role } from "./user.interface";
-import { User } from "./user.model";
 import bcryptjs from "bcryptjs";
+import { User } from "./user.model";
+import { JwtPayload } from "jsonwebtoken";
 import { QueryBuilder } from "../../utils/QueryBuilder";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 
 const createUserService = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
@@ -103,6 +103,7 @@ const getSingleUser = async (id: string) => {
 
 const getMe = async (userId: string) => {
   const user = await User.findById(userId).select("-password");
+
   return {
     data: user,
   };

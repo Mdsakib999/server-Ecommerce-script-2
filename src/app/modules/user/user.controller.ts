@@ -3,10 +3,16 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { UserService } from "./user.service";
 import { JwtPayload } from "jsonwebtoken";
+import { createUserToken } from "../../utils/userToken";
+import { setAuthCookie } from "../../utils/setCookie";
 
 const createUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserService.createUserService(req.body);
+
+    const userTokens = await createUserToken(user);
+
+    setAuthCookie(res, userTokens);
 
     res.status(201).json({
       success: true,
@@ -43,12 +49,6 @@ const getAllUsers = asyncHandler(
       query as Record<string, string>
     );
 
-    // res.status(httpStatus.OK).json({
-    //     success: true,
-    //     message: "All Users Retrieved Successfully",
-    //     data: users
-    // })
-
     res.status(200).json({
       success: true,
       message: "All users retrieved Successfully",
@@ -57,6 +57,7 @@ const getAllUsers = asyncHandler(
     });
   }
 );
+
 const getMe = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = req.user as JwtPayload;
@@ -69,6 +70,7 @@ const getMe = asyncHandler(
     });
   }
 );
+
 const getSingleUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
