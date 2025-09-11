@@ -21,23 +21,16 @@ const credentialsLogin = asyncHandler(
         });
       }
 
-      // wrap async work in try/catch
       (async () => {
         try {
           const userTokens = await createUserToken(user);
-
-          const { password: pass, ...rest } = user.toObject();
 
           setAuthCookie(res, userTokens);
 
           return res.status(200).json({
             success: true,
             message: "User Logged In Successfully",
-            data: {
-              accessToken: userTokens.accessToken,
-              refreshToken: userTokens.refreshToken,
-              user: rest,
-            },
+            data: user,
           });
         } catch (error) {
           return next(error);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import bcryptjs from "bcryptjs";
 import passport from "passport";
@@ -27,15 +28,9 @@ passport.use(
           return done(null, false, { message: "User does not exists" });
         }
 
-        if (!isUserExists.isVerified) {
-          return done(null, false, { message: "user is not verified" });
-        }
-
         const isGoogleAuthenticated = isUserExists.auths.some(
           (providerObject) => providerObject.provider === "google"
         );
-
-        console.log("isGoogleAuthenticated==>", isGoogleAuthenticated);
 
         if (isGoogleAuthenticated && !isUserExists.password) {
           return done(null, false, {
@@ -83,8 +78,19 @@ passport.use(
 
         let isUserExist = await User.findOne({ email });
 
-        if (isUserExist && !isUserExist.isVerified) {
-          return done(null, false, { message: "User is not verified" });
+        const isCredentialsAuthenticated = isUserExist!.auths.some(
+          (providerObject) => providerObject.provider === "credentials"
+        );
+        const isGoogleAuthenticated = isUserExist!.auths.some(
+          (providerObject) => providerObject.provider === "google"
+        );
+
+        if (isCredentialsAuthenticated && !isGoogleAuthenticated) {
+          isUserExist!.auths.push({
+            provider: "google",
+            providerId: profile.id,
+          });
+          await isUserExist!.save();
         }
 
         if (!isUserExist) {
@@ -93,7 +99,6 @@ passport.use(
             name: profile.displayName,
             picture: profile.photos?.[0]?.value,
             role: Role.CUSTOMER,
-            isVerified: true,
             auths: [
               {
                 provider: "google",

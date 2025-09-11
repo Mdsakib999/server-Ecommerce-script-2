@@ -41,10 +41,6 @@ const userSchema = new Schema<IUser>(
     address: {
       type: String,
     },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
     auths: {
       type: [AuthProviderSchema],
       required: true,

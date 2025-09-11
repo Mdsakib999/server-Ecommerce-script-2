@@ -23,9 +23,6 @@ export const checkAuth =
       if (!isUserExist) {
         throw new Error("User does not exist");
       }
-      if (!isUserExist.isVerified) {
-        throw new Error("User is not verified");
-      }
 
       if (!authRoles.includes(verifiedToken.role)) {
         throw new Error("You are not permitted to view this route!");
@@ -34,7 +31,7 @@ export const checkAuth =
       req.user = verifiedToken;
       next();
     } catch (error) {
-      console.log("jwt error", error);
+      console.log("checkAuth error", error);
       next(error);
     }
   };
