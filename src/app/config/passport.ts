@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcryptjs";
 import passport from "passport";
 import {
   Strategy as GoogleStrategy,
@@ -22,7 +22,7 @@ passport.use(
     },
     async (email: string, password: string, done) => {
       try {
-        const isUserExists = await User.findOne({ email });
+        const isUserExists = await User.findOne({ email }).select("+password");
 
         if (!isUserExists) {
           return done(null, false, { message: "User does not exists" });
@@ -38,7 +38,7 @@ passport.use(
           });
         }
 
-        const isPasswordMatched = await bcryptjs.compare(
+        const isPasswordMatched = await bcrypt.compare(
           password,
           isUserExists?.password as string
         );
@@ -47,7 +47,11 @@ passport.use(
           return done(null, false, { message: "Invalid credentials" });
         }
 
-        return done(null, isUserExists);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: pass, ...remainingUserData } =
+          isUserExists.toObject();
+
+        return done(null, remainingUserData);
       } catch (error) {
         console.log(`error=> ${error}`);
         done(error);
