@@ -28,7 +28,7 @@ passport.use(
           return done(null, false, { message: "User does not exists" });
         }
 
-        const isGoogleAuthenticated = isUserExists.auths.some(
+        const isGoogleAuthenticated = isUserExists?.auths.some(
           (providerObject) => providerObject.provider === "google"
         );
 
@@ -40,7 +40,7 @@ passport.use(
 
         const isPasswordMatched = await bcryptjs.compare(
           password,
-          isUserExists.password as string
+          isUserExists?.password as string
         );
 
         if (!isPasswordMatched) {
@@ -78,15 +78,15 @@ passport.use(
 
         let isUserExist = await User.findOne({ email });
 
-        const isCredentialsAuthenticated = isUserExist!.auths.some(
+        const isCredentialsAuthenticated = isUserExist?.auths.some(
           (providerObject) => providerObject.provider === "credentials"
         );
-        const isGoogleAuthenticated = isUserExist!.auths.some(
+        const isGoogleAuthenticated = isUserExist?.auths.some(
           (providerObject) => providerObject.provider === "google"
         );
 
         if (isCredentialsAuthenticated && !isGoogleAuthenticated) {
-          isUserExist!.auths.push({
+          isUserExist?.auths.push({
             provider: "google",
             providerId: profile.id,
           });
