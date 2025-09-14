@@ -1,4 +1,4 @@
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { User } from "./user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { QueryBuilder } from "../../utils/QueryBuilder";
@@ -12,7 +12,7 @@ const createUserService = async (payload: Partial<IUser>) => {
     throw new Error("User Already Exists");
   }
 
-  const hashedPassword = await bcryptjs.hash(
+  const hashedPassword = await bcrypt.hash(
     password as string,
     Number(process.env.BCRYPT_SALT_ROUNDS)
   );
