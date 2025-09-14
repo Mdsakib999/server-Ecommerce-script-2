@@ -3,6 +3,7 @@ import { User } from "./user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { IAuthProvider, IUser, Role } from "./user.interface";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 const createUserService = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
@@ -35,7 +36,10 @@ const createUserService = async (payload: Partial<IUser>) => {
   return remaining;
 };
 
+import { Request } from "express";
+
 const updateUserService = async (
+  req: Request,
   userId: string,
   payload: Partial<IUser>,
   decodedToken: JwtPayload
@@ -46,6 +50,11 @@ const updateUserService = async (
     }
   }
 
+  if (req.file) {
+    const result = await uploadToCloudinary(req.file.buffer, "myFolder");
+    payload.picture = result.url;
+  }
+
   const ifUserExist = await User.findById(userId);
 
   if (!ifUserExist) {
@@ -53,12 +62,6 @@ const updateUserService = async (
   }
 
   if (payload.role) {
-    if (decodedToken.role === Role.CUSTOMER) {
-      throw new Error("You are not authorized");
-    }
-  }
-
-  if (payload.isVerified) {
     if (decodedToken.role === Role.CUSTOMER) {
       throw new Error("You are not authorized");
     }
