@@ -4,7 +4,7 @@ import * as productService from "./product.service";
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const product = await productService.createProduct(req.body);
+    const product = await productService.createProduct(req, req.body);
     res.status(201).json(product);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -38,6 +38,7 @@ export const getProductById = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const product = await productService.updateProduct(
+      req,
       req.params.id as string,
       req.body
     );

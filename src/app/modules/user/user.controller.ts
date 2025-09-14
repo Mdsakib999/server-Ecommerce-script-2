@@ -29,6 +29,7 @@ const updateUser = asyncHandler(
 
     const payload = req.body;
     const user = await UserService.updateUserService(
+      req,
       userId as string,
       payload,
       verifiedToken as JwtPayload
