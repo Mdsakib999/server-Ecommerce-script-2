@@ -5,7 +5,10 @@ import * as productService from "./product.service";
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const product = await productService.createProduct(req, req.body);
-    res.status(201).json(product);
+    res.status(201).json({
+      success: true,
+      data: product,
+    });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
