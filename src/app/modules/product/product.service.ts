@@ -4,7 +4,7 @@ import { IProduct } from "./product.interface";
 import Product from "./product.model";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
-export const createProduct = async (req: Request, data: Partial<IProduct>) => {
+const createProduct = async (req: Request, data: Partial<IProduct>) => {
   if (req.files && Array.isArray(req.files)) {
     const files = req.files as Express.Multer.File[];
 
@@ -18,12 +18,9 @@ export const createProduct = async (req: Request, data: Partial<IProduct>) => {
   return await Product.create(data);
 };
 
-export const getAllProducts = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(
-    Product.find().populate("reviews"),
-    query
-  );
-  const productSearchableFields = ["name", "brand", "description"];
+const getAllProducts = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(Product.find(), query);
+  const productSearchableFields = ["name", "brand", "category", "description"];
 
   const productData = queryBuilder
     .filter()
@@ -43,11 +40,11 @@ export const getAllProducts = async (query: Record<string, string>) => {
   };
 };
 
-export const getProductById = async (id: string) => {
+const getProductById = async (id: string) => {
   return await Product.findById(id).populate("reviews");
 };
 
-export const updateProduct = async (
+const updateProduct = async (
   req: Request,
   id: string,
   data: Partial<IProduct>
@@ -55,12 +52,10 @@ export const updateProduct = async (
   if (req.files && Array.isArray(req.files)) {
     const files = req.files as Express.Multer.File[];
 
-    // Upload new images
     const results = await Promise.all(
       files.map((file) => uploadToCloudinary(file.buffer, "products"))
     );
 
-    // Replace or merge old images
     data.images = results.map((r) => r.url);
   }
 
@@ -70,6 +65,14 @@ export const updateProduct = async (
   });
 };
 
-export const deleteProduct = async (id: string) => {
+const deleteProduct = async (id: string) => {
   return await Product.findByIdAndDelete(id);
+};
+
+export const productService = {
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
 };

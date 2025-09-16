@@ -14,6 +14,7 @@ export class QueryBuilder<T> {
     const filter = { ...this.query };
 
     for (const field of excludeField) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete filter[field];
     }
 
@@ -50,7 +51,7 @@ export class QueryBuilder<T> {
   }
   paginate(): this {
     const page = Number(this.query.page) || 1;
-    const limit = Number(this.query.limit) || 10;
+    const limit = Number(this.query.limit) || 6;
     const skip = (page - 1) * limit;
 
     this.modelQuery = this.modelQuery.skip(skip).limit(limit);
