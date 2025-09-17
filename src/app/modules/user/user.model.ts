@@ -50,6 +50,10 @@ const userSchema = new Schema<IUser>(
       enum: Object.values(Role),
       default: Role.CUSTOMER,
     },
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
     orders: [
       {
         type: Schema.Types.ObjectId,

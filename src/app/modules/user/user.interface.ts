@@ -18,10 +18,10 @@ export interface IUser {
   phone?: string;
   picture?: string;
   address?: string;
-  isVerified?: boolean;
   auths: IAuthProvider[];
   role: Role;
   orders: Types.ObjectId[];
+  isBanned: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

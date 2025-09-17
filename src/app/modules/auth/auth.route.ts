@@ -21,10 +21,26 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: `${process.env.FRONTEND_URL}/login?error=There is some issues with your account. Please contact with out support team!`,
-  }),
-  AuthController.googleCallbackController
+  (req: Request, res: Response, next: NextFunction) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.authenticate("google", (err: any, user: any, info: any) => {
+      if (err) {
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/login?error=Something went wrong`
+        );
+      }
+
+      if (!user) {
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(
+            info?.message || "Cannot login"
+          )}`
+        );
+      }
+      req.user = user;
+      return AuthController.googleCallbackController(req, res, next);
+    })(req, res, next);
+  }
 );
 
 export const authRoutes = router;
