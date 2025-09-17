@@ -28,6 +28,12 @@ passport.use(
           return done(null, false, { message: "User does not exists" });
         }
 
+        if (isUserExists && isUserExists.isBanned) {
+          return done(null, false, {
+            message: "You're banned! please contact support",
+          });
+        }
+
         const isGoogleAuthenticated = isUserExists?.auths.some(
           (providerObject) => providerObject.provider === "google"
         );
@@ -81,6 +87,12 @@ passport.use(
         }
 
         let isUserExist = await User.findOne({ email });
+
+        if (isUserExist && isUserExist.isBanned) {
+          return done(null, false, {
+            message: "You're banned! please contact support",
+          });
+        }
 
         const isCredentialsAuthenticated = isUserExist?.auths.some(
           (providerObject) => providerObject.provider === "credentials"

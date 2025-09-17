@@ -10,7 +10,7 @@ router.post("/register", UserControllers.createUser);
 router.get("/all-users", checkAuth(Role.ADMIN), UserControllers.getAllUsers);
 router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
 router.get("/:id", checkAuth(Role.ADMIN), UserControllers.getSingleUser);
-router.patch(
+router.put(
   "/:id",
   checkAuth(...Object.values(Role)),
   upload.single("image"),

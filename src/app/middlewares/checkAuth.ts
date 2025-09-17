@@ -24,6 +24,10 @@ export const checkAuth =
         throw new Error("User does not exist");
       }
 
+      if (isUserExist && isUserExist.isBanned) {
+        throw new Error("You're banned! please contact support");
+      }
+
       if (!authRoles.includes(verifiedToken.role)) {
         throw new Error("You are not permitted to view this route!");
       }

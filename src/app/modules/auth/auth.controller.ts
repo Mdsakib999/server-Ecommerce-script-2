@@ -98,7 +98,11 @@ const googleCallbackController = asyncHandler(
     const tokenInfo = createUserToken(user);
     setAuthCookie(res, tokenInfo);
 
-    res.redirect(`${process.env.FRONTEND_URL}/${redirectTo}`);
+    res.redirect(
+      `${
+        process.env.FRONTEND_URL
+      }/${redirectTo}?success=${"Logged in successfully"}`
+    );
   }
 );
 
