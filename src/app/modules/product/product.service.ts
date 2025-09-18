@@ -19,6 +19,7 @@ const createProduct = async (req: Request, data: Partial<IProduct>) => {
 };
 
 const getAllProducts = async (query: Record<string, string>) => {
+  console.log("query===>", query);
   const queryBuilder = new QueryBuilder(Product.find(), query);
   const productSearchableFields = ["name", "brand", "category"];
 

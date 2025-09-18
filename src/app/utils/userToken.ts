@@ -15,6 +15,7 @@ export const createUserToken = (user: Partial<IUser>) => {
     process.env.JWT_ACCESS_SECRET as string,
     process.env.JWT_ACCESS_EXPIRES as string
   );
+  
   const refreshToken = generateToken(
     jwtPayload,
     process.env.JWT_ACCESS_SECRET as string,
