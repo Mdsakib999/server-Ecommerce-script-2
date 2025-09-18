@@ -9,8 +9,10 @@ export const uploadToCloudinary = async (
     const stream = cloudinary.uploader.upload_stream(
       { folder },
       (error, result) => {
-        if (error) reject(error);
-        else resolve({ url: result!.secure_url, public_id: result!.public_id });
+        if (error) {
+          reject(error);
+        } else
+          resolve({ url: result!.secure_url, public_id: result!.public_id });
       }
     );
     stream.end(fileBuffer);
