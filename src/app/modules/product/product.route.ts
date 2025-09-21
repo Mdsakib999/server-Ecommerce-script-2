@@ -15,6 +15,7 @@ router.post(
 
 router.get("/all-products", productController.getAllProducts);
 router.get("/:id", productController.getProductById);
+
 router.put(
   "/:id",
   checkAuth(Role.ADMIN),
