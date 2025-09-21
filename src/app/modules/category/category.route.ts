@@ -11,11 +11,7 @@ router.post(
   categoryController.createCategory
 );
 
-router.get(
-  "/all-categories",
-  checkAuth(Role.ADMIN),
-  categoryController.getAllCategories
-);
+router.get("/all-categories", categoryController.getAllCategories);
 router.put("/:id", checkAuth(Role.ADMIN), categoryController.updateCategory);
 router.delete("/:id", checkAuth(Role.ADMIN), categoryController.deleteCategory);
 

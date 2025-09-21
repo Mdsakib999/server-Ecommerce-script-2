@@ -19,7 +19,6 @@ const createProduct = async (req: Request, data: Partial<IProduct>) => {
 };
 
 const getAllProducts = async (query: Record<string, string>) => {
-  console.log("query===>", query);
   const queryBuilder = new QueryBuilder(Product.find(), query);
   const productSearchableFields = ["name", "brand", "category"];
 
@@ -30,6 +29,20 @@ const getAllProducts = async (query: Record<string, string>) => {
     .fields()
     .paginate();
 
+  const fieldsRaw = query["fields[]"];
+  let categories: string[] = [];
+  if (fieldsRaw) {
+    if (Array.isArray(fieldsRaw)) {
+      categories = fieldsRaw;
+    } else if (typeof fieldsRaw === "string") {
+      categories = [fieldsRaw];
+    }
+  }
+  if (categories.length > 0) {
+    queryBuilder.modelQuery = queryBuilder.modelQuery.find({
+      category: { $in: categories },
+    });
+  }
   const [data, meta] = await Promise.all([
     productData.build(),
     queryBuilder.getMeta(),
@@ -42,7 +55,7 @@ const getAllProducts = async (query: Record<string, string>) => {
 };
 
 const getProductById = async (id: string) => {
-  return await Product.findById(id).populate("reviews");
+  return await Product.findById(id);
 };
 
 const updateProduct = async (
