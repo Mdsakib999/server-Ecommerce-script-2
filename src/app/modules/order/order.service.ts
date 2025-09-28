@@ -16,7 +16,10 @@ const createOrder = async (data: Partial<IOrder>) => {
 };
 
 const getAllOrders = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(Order.find(), query);
+  const queryBuilder = new QueryBuilder(
+    Order.find().populate("orders.product"),
+    query
+  );
 
   const orderData = queryBuilder.filter().search([]).sort().fields().paginate();
 
@@ -42,8 +45,15 @@ const updateOrderStatus = async (id: string, data: Partial<IOrder>) => {
   });
 };
 
-const deleteOrder = async (id: string) => {
-  return await Order.findByIdAndDelete(id);
+const deleteOrder = async (orderId: string) => {
+  const order = await Order.findById(orderId);
+  if (!order) throw new Error("Order not found");
+
+  await User.findByIdAndUpdate(order.user, {
+    $pull: { orders: orderId },
+  });
+
+  return await Order.findByIdAndDelete(orderId);
 };
 
 export const orderService = {

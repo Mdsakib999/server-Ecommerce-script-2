@@ -10,9 +10,7 @@ import {
 import { Strategy as LocalStrategy } from "passport-local";
 import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { envVariables } from "./envConfig";
 
 passport.use(
   new LocalStrategy(
@@ -59,7 +57,6 @@ passport.use(
 
         return done(null, remainingUserData);
       } catch (error) {
-        console.log(`error=> ${error}`);
         done(error);
       }
     }
@@ -69,9 +66,9 @@ passport.use(
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      clientID: envVariables.GOOGLE_CLIENT_ID as string,
+      clientSecret: envVariables.GOOGLE_CLIENT_SECRET as string,
+      callbackURL: envVariables.GOOGLE_CALLBACK_URL,
     },
     async (
       _accessToken: string,
@@ -126,7 +123,6 @@ passport.use(
 
         return done(null, isUserExist);
       } catch (error) {
-        console.log("Google strategy Error", error);
         return done(error);
       }
     }
@@ -142,7 +138,6 @@ passport.deserializeUser(async (id: string, done: any) => {
     const user = await User.findById(id);
     done(null, user);
   } catch (error) {
-    console.log(error);
     done(error);
   }
 });

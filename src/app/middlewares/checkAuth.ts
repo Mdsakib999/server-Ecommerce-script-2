@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../modules/user/user.model";
 import { verifyToken } from "../utils/jwt";
+import { envVariables } from "../config/envConfig";
 
 export const checkAuth =
   (...authRoles: string[]) =>
@@ -15,7 +16,7 @@ export const checkAuth =
 
       const verifiedToken = verifyToken(
         accessToken as string,
-        process.env.JWT_ACCESS_SECRET as string
+        envVariables.JWT_ACCESS_SECRET as string
       ) as JwtPayload;
 
       const isUserExist = await User.findOne({ email: verifiedToken.email });
@@ -29,13 +30,12 @@ export const checkAuth =
       }
 
       if (!authRoles.includes(verifiedToken.role)) {
-        throw new Error("You are not permitted to view this route!");
+        throw new Error("You are not authorized to access this route!");
       }
 
       req.user = verifiedToken;
       next();
     } catch (error) {
-      console.log("checkAuth error", error);
       next(error);
     }
   };

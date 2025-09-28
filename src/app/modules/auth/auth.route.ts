@@ -1,6 +1,7 @@
 import passport from "passport";
 import { NextFunction, Request, Response, Router } from "express";
 import { AuthController } from "./auth.controller";
+import { envVariables } from "../../config/envConfig";
 
 const router = Router();
 
@@ -26,13 +27,13 @@ router.get(
     passport.authenticate("google", (err: any, user: any, info: any) => {
       if (err) {
         return res.redirect(
-          `${process.env.FRONTEND_URL}/login?error=Something went wrong`
+          `${envVariables.FRONTEND_URL}/login?error=Something went wrong`
         );
       }
 
       if (!user) {
         return res.redirect(
-          `${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(
+          `${envVariables.FRONTEND_URL}/login?error=${encodeURIComponent(
             info?.message || "Cannot login"
           )}`
         );

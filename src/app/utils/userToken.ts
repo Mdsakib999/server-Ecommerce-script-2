@@ -2,6 +2,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { IUser } from "../modules/user/user.interface";
 import { generateToken, verifyToken } from "./jwt";
 import { User } from "../modules/user/user.model";
+import { envVariables } from "../config/envConfig";
 
 export const createUserToken = (user: Partial<IUser>) => {
   const jwtPayload = {
@@ -12,14 +13,14 @@ export const createUserToken = (user: Partial<IUser>) => {
 
   const accessToken = generateToken(
     jwtPayload,
-    process.env.JWT_ACCESS_SECRET as string,
-    process.env.JWT_ACCESS_EXPIRES as string
+    envVariables.JWT_ACCESS_SECRET as string,
+    envVariables.JWT_ACCESS_EXPIRES as string
   );
-  
+
   const refreshToken = generateToken(
     jwtPayload,
-    process.env.JWT_ACCESS_SECRET as string,
-    process.env.JWT_ACCESS_EXPIRES as string
+    envVariables.JWT_REFRESH_SECRET as string,
+    envVariables.JWT_REFRESH_EXPIRES as string
   );
 
   return {
@@ -33,13 +34,17 @@ export const createNewAccessTokenWithRefreshToken = async (
 ) => {
   const verifiedRefreshToken = verifyToken(
     refreshToken,
-    process.env.JWT_REFRESH_SECRET as string
+    envVariables.JWT_REFRESH_SECRET as string
   ) as JwtPayload;
 
   const isUserExist = await User.findOne({ email: verifiedRefreshToken.email });
 
   if (!isUserExist) {
     throw new Error("User does not exist");
+  }
+
+  if (isUserExist.isBanned) {
+    throw new Error("Your are Banned! Please contact support");
   }
 
   const jwtPayload = {
@@ -49,8 +54,8 @@ export const createNewAccessTokenWithRefreshToken = async (
   };
   const accessToken = generateToken(
     jwtPayload,
-    process.env.JWT_ACCESS_SECRET as string,
-    process.env.JWT_ACCESS_EXPIRES as string
+    envVariables.JWT_ACCESS_SECRET as string,
+    envVariables.JWT_ACCESS_EXPIRES as string
   );
 
   return accessToken;

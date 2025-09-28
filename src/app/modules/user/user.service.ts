@@ -15,7 +15,7 @@ const createUserService = async (payload: Partial<IUser>) => {
 
   const hashedPassword = await bcrypt.hash(
     password as string,
-    Number(process.env.BCRYPT_SALT_ROUNDS)
+    Number(envVariables.BCRYPT_SALT_ROUNDS)
   );
 
   const authProvider: IAuthProvider = {
@@ -37,6 +37,7 @@ const createUserService = async (payload: Partial<IUser>) => {
 };
 
 import { Request } from "express";
+import { envVariables } from "../../config/envConfig";
 
 const updateUserService = async (
   req: Request,
