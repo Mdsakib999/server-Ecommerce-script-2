@@ -6,6 +6,7 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { createUserToken } from "../../utils/userToken";
 import passport from "passport";
 import { AuthServices } from "./auth.service";
+import { envVariables } from "../../config/envConfig";
 
 const credentialsLogin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -43,6 +44,7 @@ const credentialsLogin = asyncHandler(
 const getNewAccessToken = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken || req.headers.authorization;
+
     if (!refreshToken) {
       throw new Error("No refresh token received from cookies");
     }
@@ -51,7 +53,6 @@ const getNewAccessToken = asyncHandler(
     );
 
     setAuthCookie(res, tokenInfo);
-
     res.status(200).json({
       success: true,
       message: "New Access Token Retrieved Successfully",
@@ -100,7 +101,7 @@ const googleCallbackController = asyncHandler(
 
     res.redirect(
       `${
-        process.env.FRONTEND_URL
+        envVariables.FRONTEND_URL
       }/${redirectTo}?success=${"Logged in successfully"}`
     );
   }

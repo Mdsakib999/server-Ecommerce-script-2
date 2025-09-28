@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import expressSession from "express-session";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
@@ -8,14 +7,13 @@ import { router } from "./app/routes/router";
 import passport from "passport";
 import "./app/config/passport";
 import cookieParser from "cookie-parser";
-
-dotenv.config();
+import { envVariables } from "./app/config/envConfig";
 
 const app = express();
 
 app.use(
   expressSession({
-    secret: process.env.EXPRESS_SESSION_SECRET as string,
+    secret: envVariables.EXPRESS_SESSION_SECRET as string,
     resave: false,
     saveUninitialized: false,
   })
@@ -31,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: envVariables.FRONTEND_URL,
     credentials: true,
   })
 );

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
+import { envVariables } from "../config/envConfig";
 
 export const globalErrorHandler = async (
   err: any,
@@ -14,7 +15,7 @@ export const globalErrorHandler = async (
   res.status(statusCode).json({
     success: false,
     message,
-    err: process.env.NODE_ENV === "development" ? err : null,
-    stack: process.env.NODE_ENV === "development" ? err.stack : null,
+    err: envVariables.NODE_ENV === "development" ? err : null,
+    stack: envVariables.NODE_ENV === "development" ? err.stack : null,
   });
 };
