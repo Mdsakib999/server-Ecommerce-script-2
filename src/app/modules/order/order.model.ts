@@ -18,6 +18,7 @@ const orderItemSchema = new Schema<IOrderItem>(
 const orderSchema = new Schema<IOrder>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    transactionId: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
     mobileNumber: { type: String, required: true },

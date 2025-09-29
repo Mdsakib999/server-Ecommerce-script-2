@@ -1,0 +1,1 @@
+{"version":3,"file":"offer.interface.d.ts","sourceRoot":"","sources":["../../../../src/app/modules/offers/offer.interface.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,WAAW;IAC1B,GAAG,EAAE,MAAM,CAAC;IACZ,SAAS,EAAE,MAAM,CAAC;CACnB;AAED,MAAM,WAAW,MAAM;IACrB,GAAG,CAAC,EAAE,MAAM,CAAC;IACb,MAAM,EAAE,WAAW,EAAE,CAAC;CACvB"}

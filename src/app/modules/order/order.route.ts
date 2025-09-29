@@ -7,6 +7,7 @@ const router = Router();
 
 router.post("/create-order", orderController.createOrder);
 router.get("/all-orders", checkAuth(Role.ADMIN), orderController.getAllOrders);
+router.get("/track/:transactionId", orderController.trackOrder);
 router.get("/:id", checkAuth(Role.CUSTOMER), orderController.getMyOrder);
 router.put("/:id", checkAuth(Role.ADMIN), orderController.updateOrderStatus);
 router.delete("/:id", checkAuth(Role.ADMIN), orderController.deleteOrder);

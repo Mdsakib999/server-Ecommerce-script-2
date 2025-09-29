@@ -9,6 +9,7 @@ export interface IOrderItem {
 
 export interface IOrder {
   _id?: Types.ObjectId;
+  transactionId: string;
   user: Types.ObjectId;
   name: string;
   email: string;

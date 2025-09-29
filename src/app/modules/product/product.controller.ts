@@ -20,6 +20,7 @@ const getAllProducts = async (req: Request, res: Response) => {
     const products = await productService.getAllProducts(
       query as Record<string, string>
     );
+
     res.json(products);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -46,7 +47,10 @@ const updateProduct = async (req: Request, res: Response) => {
       req.body
     );
     if (!product) return res.status(404).json({ error: "Product not found" });
-    res.json(product);
+    res.status(200).json({
+      success: true,
+      data: product,
+    });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

@@ -78,10 +78,28 @@ const deleteOrder = async (req: Request, res: Response) => {
   }
 };
 
+const trackOrder = async (req: Request, res: Response) => {
+  try {
+    const order = await orderService.trackOrder(
+      req.params.transactionId as string
+    );
+
+    if (!order) return res.status(404).json({ error: "order not found" });
+
+    res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const orderController = {
   createOrder,
   getAllOrders,
   getMyOrder,
   updateOrderStatus,
   deleteOrder,
+  trackOrder,
 };
