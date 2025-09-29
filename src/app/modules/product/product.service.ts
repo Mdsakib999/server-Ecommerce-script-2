@@ -55,7 +55,7 @@ const getAllProducts = async (query: Record<string, string>) => {
 };
 
 const getProductById = async (id: string) => {
-  return await Product.findById(id);
+  return await Product.findById(id).lean();
 };
 
 const updateProduct = async (

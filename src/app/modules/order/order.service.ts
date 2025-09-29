@@ -2,9 +2,13 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { IOrder } from "./order.interface";
 import Order from "./order.model";
 import { User } from "../user/user.model";
+import { generateUniqueTransactionId } from "../../utils/generateTransactionId";
 
 const createOrder = async (data: Partial<IOrder>) => {
-  const result = await Order.create(data);
+  const transactionId = await generateUniqueTransactionId();
+
+  const result = await Order.create({ ...data, transactionId });
+
   await User.findByIdAndUpdate(data.user, { $push: { orders: result._id } });
 
   const populatedOrder = await Order.findById(result?._id).populate({
@@ -56,10 +60,15 @@ const deleteOrder = async (orderId: string) => {
   return await Order.findByIdAndDelete(orderId);
 };
 
+const trackOrder = async (trackingId: string) => {
+  return await Order.findOne({ transactionId: trackingId }).lean();
+};
+
 export const orderService = {
   createOrder,
   getAllOrders,
   getMyOrder,
   updateOrderStatus,
   deleteOrder,
+  trackOrder,
 };
