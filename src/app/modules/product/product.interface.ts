@@ -11,6 +11,7 @@ export interface IProduct extends Document {
   reviews?: Types.ObjectId[];
   inStock: boolean;
   description: string;
+  specifications?: string;
   createdAt: Date;
   updatedAt: Date;
 }

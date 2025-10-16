@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productService = void 0;
 const QueryBuilder_1 = require("../../utils/QueryBuilder");
-const product_model_1 = __importDefault(require("./product.model"));
 const uploadToCloudinary_1 = require("../../utils/uploadToCloudinary");
+const product_model_1 = __importDefault(require("./product.model"));
 const createProduct = (req, data) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.files && Array.isArray(req.files)) {
         const files = req.files;
@@ -61,11 +61,16 @@ const getProductById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield product_model_1.default.findById(id).lean();
 });
 const updateProduct = (req, id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    let finalImages = [];
+    if (req.body.existingImages) {
+        finalImages = JSON.parse(req.body.existingImages);
+    }
     if (req.files && Array.isArray(req.files)) {
         const files = req.files;
         const results = yield Promise.all(files.map((file) => (0, uploadToCloudinary_1.uploadToCloudinary)(file.buffer, "products")));
-        data.images = results.map((r) => r.url);
+        finalImages = [...finalImages, ...results.map((r) => r.url)];
     }
+    data.images = finalImages;
     return yield product_model_1.default.findByIdAndUpdate(id, data, {
         new: true,
         runValidators: true,

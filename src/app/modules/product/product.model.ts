@@ -12,6 +12,7 @@ const ProductSchema = new Schema<IProduct>(
     images: { type: [String], required: true },
     inStock: { type: Boolean, default: true },
     description: { type: String, required: true },
+    specifications: { type: String, default: "" },
     reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   },
   { timestamps: true }
