@@ -1,4 +1,9 @@
 import { IOrder } from "./order.interface";
+export declare const updateOrderStatus: (id: string, data: Partial<IOrder>) => Promise<(import("mongoose").Document<unknown, {}, IOrder, {}, {}> & IOrder & Required<{
+    _id: import("mongoose").Types.ObjectId;
+}> & {
+    __v: number;
+}) | null>;
 export declare const orderService: {
     createOrder: (data: Partial<IOrder>) => Promise<(import("mongoose").Document<unknown, {}, IOrder, {}, {}> & IOrder & Required<{
         _id: import("mongoose").Types.ObjectId;

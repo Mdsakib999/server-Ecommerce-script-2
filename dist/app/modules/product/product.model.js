@@ -11,6 +11,7 @@ const ProductSchema = new mongoose_1.Schema({
     images: { type: [String], required: true },
     inStock: { type: Boolean, default: true },
     description: { type: String, required: true },
+    specifications: { type: String, default: "" },
     reviews: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Review" }],
 }, { timestamps: true });
 const Product = (0, mongoose_1.model)("Product", ProductSchema);

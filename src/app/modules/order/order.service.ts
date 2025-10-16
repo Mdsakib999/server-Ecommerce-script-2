@@ -38,7 +38,6 @@ const createOrder = async (data: Partial<IOrder>) => {
     path: "orders.product",
     select: "name images discountPrice price",
   });
-  console.log(populatedOrder);
 
   return populatedOrder;
 };

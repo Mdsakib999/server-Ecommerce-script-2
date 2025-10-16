@@ -12,14 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderService = void 0;
+exports.orderService = exports.updateOrderStatus = void 0;
 const QueryBuilder_1 = require("../../utils/QueryBuilder");
 const order_model_1 = __importDefault(require("./order.model"));
 const user_model_1 = require("../user/user.model");
 const generateTransactionId_1 = require("../../utils/generateTransactionId");
+const product_model_1 = __importDefault(require("../product/product.model"));
 const createOrder = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const productIds = (_a = data === null || data === void 0 ? void 0 : data.orders) === null || _a === void 0 ? void 0 : _a.map((order) => order.product);
+    const products = yield product_model_1.default.find({ _id: { $in: productIds } });
+    for (const orderItem of data.orders) {
+        const product = products.find((p) => { var _a; return ((_a = p._id) === null || _a === void 0 ? void 0 : _a.toString()) === orderItem.product.toString(); });
+        if (!product) {
+            throw new Error("product ot found");
+        }
+        if (orderItem.quantity > product.quantity) {
+            throw new Error(`only ${product.quantity} available`);
+        }
+    }
     const transactionId = yield (0, generateTransactionId_1.generateUniqueTransactionId)();
     const result = yield order_model_1.default.create(Object.assign(Object.assign({}, data), { transactionId }));
+    for (const orderItem of data.orders) {
+        yield product_model_1.default.findByIdAndUpdate(orderItem.product, {
+            $inc: { quantity: -orderItem.quantity },
+        });
+    }
     yield user_model_1.User.findByIdAndUpdate(data.user, { $push: { orders: result._id } });
     const populatedOrder = yield order_model_1.default.findById(result === null || result === void 0 ? void 0 : result._id).populate({
         path: "orders.product",
@@ -43,11 +61,35 @@ const getMyOrder = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     return yield order_model_1.default.find({ user: userId }).populate("orders.product");
 });
 const updateOrderStatus = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield order_model_1.default.findByIdAndUpdate(id, data, {
-        new: true,
-        runValidators: true,
+    const { status } = data;
+    const order = yield order_model_1.default.findById(id).populate("orders.product");
+    if (!order)
+        throw new Error("Order not found");
+    if (status === "CANCELLED") {
+        for (const item of order.orders) {
+            const productDoc = item.product;
+            if (productDoc && productDoc.quantity !== undefined) {
+                productDoc.quantity += item.quantity;
+                yield productDoc.save();
+            }
+        }
+    }
+    if (status === "CONFIRMED" && order.status === "CANCELLED") {
+        for (const item of order.orders) {
+            const productDoc = item.product;
+            if (productDoc && productDoc.quantity !== undefined) {
+                productDoc.quantity -= item.quantity;
+                yield productDoc.save();
+            }
+        }
+    }
+    const updatedOrder = yield order_model_1.default.findByIdAndUpdate(id, { status }, { new: true, runValidators: true }).populate({
+        path: "orders.product",
+        select: "name images discountPrice price quantity",
     });
+    return updatedOrder;
 });
+exports.updateOrderStatus = updateOrderStatus;
 const deleteOrder = (orderId) => __awaiter(void 0, void 0, void 0, function* () {
     const order = yield order_model_1.default.findById(orderId);
     if (!order)
@@ -64,7 +106,7 @@ exports.orderService = {
     createOrder,
     getAllOrders,
     getMyOrder,
-    updateOrderStatus,
+    updateOrderStatus: exports.updateOrderStatus,
     deleteOrder,
     trackOrder,
 };
